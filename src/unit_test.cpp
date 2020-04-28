@@ -12,19 +12,24 @@
 #include "IndexOutOfBoundException.h"
 using namespace std;
 
-bool comp(const int& i, const int& j)
-{
-	return i <= j;
-}
+class Comparator{
+	public:
+		bool compare(const int& i, const int& j)
+		{
+			return i <= j;
+		}
 
-bool eq(const int& i, const int& j)
-{
-	return i == j;
-}
+		bool equals(const int& i, const int& j)
+		{
+			return i == j;
+		}
+};
+
 
 TEST(GTest_Test, CanInsertAndGet)
 {
-	RandAccPriorityQueue<int> queue(comp, eq);
+
+	RandAccPriorityQueue<int, Comparator> queue;
 	queue.insert(7);
 	queue.insert(5);
 	queue.insert(6);
@@ -42,7 +47,8 @@ TEST(GTest_Test, CanInsertAndGet)
 
 TEST(GTest_Test, CanGetIndex)
 {
-	RandAccPriorityQueue<int> queue(comp, eq);
+
+	RandAccPriorityQueue<int, Comparator> queue;
 	queue.insert(7);
 	queue.insert(5);
 	queue.insert(6);
@@ -55,7 +61,8 @@ TEST(GTest_Test, CanGetIndex)
 
 TEST(GTest_Test, CanErase)
 {
-	RandAccPriorityQueue<int> queue(comp, eq);
+
+	RandAccPriorityQueue<int, Comparator> queue;
 	queue.insert(7);
 	queue.insert(5);
 	queue.insert(6);
@@ -67,7 +74,8 @@ TEST(GTest_Test, CanErase)
 
 TEST(GTest_Test, ArrayOperatorTest)
 {
-	RandAccPriorityQueue<int> queue(comp, eq);
+
+	RandAccPriorityQueue<int, Comparator> queue;
 	queue.insert(7);
 	queue.insert(5);
 	queue.insert(6);
@@ -86,7 +94,8 @@ TEST(GTest_Test, ArrayOperatorTest)
 
 TEST(GTest_Test, CanUpdate)
 {
-	RandAccPriorityQueue<int> queue(comp, eq);
+//	RandAccPriorityQueue<int> queue(comp, eq);
+	RandAccPriorityQueue<int, Comparator> queue;
 	queue.insert(7);
 	queue.insert(5);
 	queue.insert(6);
@@ -100,7 +109,8 @@ TEST(GTest_Test, CanUpdate)
 
 TEST(GTest_Test, AccessingEnds)
 {
-	RandAccPriorityQueue<int> queue(comp, eq);
+//	RandAccPriorityQueue<int> queue(comp, eq);
+	RandAccPriorityQueue<int, Comparator> queue;
 	ASSERT_THROW(queue.front(), IndexOutOfBoundException);
 	ASSERT_THROW(queue.back(), IndexOutOfBoundException);
 	ASSERT_THROW(queue.pop_front(), IndexOutOfBoundException);
@@ -117,45 +127,10 @@ TEST(GTest_Test, AccessingEnds)
 	ASSERT_EQ(7, queue.back());
 }
 
-struct MSG
-{
-//	char id[10];
-	std::string id;
-	int priority;
-};
-
-bool msg_comp(const MSG& msg1, const MSG& msg2)
-{
-	return msg1.priority > msg2.priority;
-}
-
-bool msg_equals(const MSG& msg1, const MSG& msg2)
-{
-	return msg1.id == msg2.id;
-}
-
-TEST(Struct_test, CanInsertAndGet)
-{
-	RandAccPriorityQueue<MSG> queue(msg_comp, msg_equals);
-	MSG msg1 = {"abc", 3};
-	MSG msg2 = {"def", 1};
-	MSG msg3 = {"gh", 2};
-	MSG msg4 = {"ad", 1};
-
-	queue.insert(msg1);
-	queue.insert(msg2);
-	queue.insert(msg3);
-	queue.insert(msg4);
-
-	ASSERT_EQ("abc", queue.get(0).id);
-	ASSERT_EQ("gh", queue.get(1).id);
-	ASSERT_EQ("def", queue.get(2).id);
-	ASSERT_EQ("ad", queue.get(3).id);
-}
 
 TEST(GTest_Test, CanUseWithForEachLoop)
 {
-	RandAccPriorityQueue<int> queue(comp, eq);
+	RandAccPriorityQueue<int, Comparator> queue;
 	for(int i = 0; i < 10; i++)
 	{
 		queue.insert(i);

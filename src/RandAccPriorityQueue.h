@@ -11,23 +11,11 @@
 #include <vector>
 #include "IndexOutOfBoundException.h"
 
-template <class T>
+template <class T, class CompClass>
 class RandAccPriorityQueue
 {
 	public:
 		typedef const T* iterator;
-
-
-		/******************************************************************************************************
-		* Func  : RandAccPriorityQueue
-		* Desc  : Constructor of the object. Initialize the 'compare' and 'equals' function pointers.
-		* Param : compare	- A function pointer to compare the priority of two objects. This function should
-		* 					  return true when the priority of the first parameter(ob1) to this function is higher
-		* 					  than the priority of the second parameter(ob2).
-		* 		  equals	- A function pointer to decide whether two objects are equal.
-		* Ret   : None
-		******************************************************************************************************/
-		RandAccPriorityQueue(bool (*compare)(const T& ob1, const T& ob2), bool (*equals)(const T& ob1, const T& ob2));
 
 
 		/******************************************************************************************************
@@ -170,9 +158,9 @@ class RandAccPriorityQueue
 
 	private:
 		std::vector<T> vec;								//A vector to store objects.
-		bool (*compare)(const T& ob1, const T& ob2);	//A function pointer to compare the priority of two objects.
-		bool (*equals)(const T& ob1, const T& ob2);		//A function pointer to check whether two objects are equal.
-
+		CompClass c;
+		bool compare(const T& ob1, const T& ob2){return this->c.compare(ob1, ob2);}
+		bool equals(const T& ob1, const T& ob2){return this->c.equals(ob1, ob2);}
 
 		/******************************************************************************************************
 		* Func  : getPriorityIndex
@@ -186,29 +174,22 @@ class RandAccPriorityQueue
 
 //--------------------------------------------Function Definitions---------------------------------------------------
 
-template <class T>
-RandAccPriorityQueue<T>::RandAccPriorityQueue(bool (*compare)(const T& ob1, const T& ob2), bool (*equals)(const T& ob1, const T& ob2))
-{
-	this->compare = compare;
-	this->equals = equals;
-}
-
-template <class T>
-void RandAccPriorityQueue<T>::insert(const T& obj)
+template <class T, class CompClass>
+void RandAccPriorityQueue<T, CompClass>::insert(const T& obj)
 {
 	int priority_index = this->getPriorityIndex(obj);
 	typename std::vector<T>::iterator it = vec.begin();
 	vec.insert(it+priority_index, obj);
 }
 
-template <class T>
-const T& RandAccPriorityQueue<T>::get(unsigned int index)
+template <class T, class CompClass>
+const T& RandAccPriorityQueue<T, CompClass>::get(unsigned int index)
 {
 	return this->operator [](index);
 }
 
-template <class T>
-T& RandAccPriorityQueue<T>::operator[](unsigned int index)
+template <class T, class CompClass>
+T& RandAccPriorityQueue<T, CompClass>::operator[](unsigned int index)
 {
 	if(index < vec.size())
 		return vec[index];
@@ -219,14 +200,14 @@ T& RandAccPriorityQueue<T>::operator[](unsigned int index)
 	}
 }
 
-template <class T>
-size_t RandAccPriorityQueue<T>::size()
+template <class T, class CompClass>
+size_t RandAccPriorityQueue<T, CompClass>::size()
 {
 	return vec.size();
 }
 
-template <class T>
-int RandAccPriorityQueue<T>::getPriorityIndex(const T& obj)
+template <class T, class CompClass>
+int RandAccPriorityQueue<T, CompClass>::getPriorityIndex(const T& obj)
 {
 	if(vec.size() == 0)
 	{
@@ -234,13 +215,13 @@ int RandAccPriorityQueue<T>::getPriorityIndex(const T& obj)
 	}
 	else if(vec.size() == 1)
 	{
-		if(this->compare(vec[0], obj))
+		if(this->compare(obj, vec[0]))
 		{
-			return 1;
+			return 0;
 		}
 		else
 		{
-			return 0;
+			return 1;
 		}
 	}
 	else
@@ -275,8 +256,8 @@ int RandAccPriorityQueue<T>::getPriorityIndex(const T& obj)
 	}
 }
 
-template <class T>
-int RandAccPriorityQueue<T>::indexOf(const T& obj)
+template <class T, class CompClass>
+int RandAccPriorityQueue<T, CompClass>::indexOf(const T& obj)
 {
 	int vec_size = vec.size();
 	for(int i = 0; i < vec_size; i++)
@@ -290,8 +271,8 @@ int RandAccPriorityQueue<T>::indexOf(const T& obj)
 	return -1;
 }
 
-template <class T>
-int RandAccPriorityQueue<T>::erase(const T& obj)
+template <class T, class CompClass>
+int RandAccPriorityQueue<T, CompClass>::erase(const T& obj)
 {
 	int ind = this->indexOf(obj);
 	if(ind > -1)
@@ -302,8 +283,8 @@ int RandAccPriorityQueue<T>::erase(const T& obj)
 	return ind;
 }
 
-template <class T>
-int RandAccPriorityQueue<T>::update(const T& old_obj, const T& new_obj)
+template <class T, class CompClass>
+int RandAccPriorityQueue<T, CompClass>::update(const T& old_obj, const T& new_obj)
 {
 	int ind = this->erase(old_obj);
 	if(ind > -1)
@@ -313,14 +294,14 @@ int RandAccPriorityQueue<T>::update(const T& old_obj, const T& new_obj)
 	return ind;
 }
 
-template <class T>
-void RandAccPriorityQueue<T>::clear()
+template <class T, class CompClass>
+void RandAccPriorityQueue<T, CompClass>::clear()
 {
 	vec.clear();
 }
 
-template <class T>
-const T& RandAccPriorityQueue<T>::front()
+template <class T, class CompClass>
+const T& RandAccPriorityQueue<T, CompClass>::front()
 {
 	if(vec.empty())
 	{
@@ -330,8 +311,8 @@ const T& RandAccPriorityQueue<T>::front()
 	return vec.front();
 }
 
-template <class T>
-const T& RandAccPriorityQueue<T>::back()
+template <class T, class CompClass>
+const T& RandAccPriorityQueue<T, CompClass>::back()
 {
 	if(vec.empty())
 	{
@@ -341,8 +322,8 @@ const T& RandAccPriorityQueue<T>::back()
 	return vec.back();
 }
 
-template <class T>
-const T RandAccPriorityQueue<T>::pop_front()
+template <class T, class CompClass>
+const T RandAccPriorityQueue<T, CompClass>::pop_front()
 {
 
 	if(vec.empty())
@@ -355,8 +336,8 @@ const T RandAccPriorityQueue<T>::pop_front()
 	return ref;
 }
 
-template <class T>
-const T RandAccPriorityQueue<T>::pop_back()
+template <class T, class CompClass>
+const T RandAccPriorityQueue<T, CompClass>::pop_back()
 {
 	if(vec.empty())
 	{
