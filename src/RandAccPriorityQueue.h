@@ -15,6 +15,9 @@ template <class T>
 class RandAccPriorityQueue
 {
 	public:
+		typedef const T* iterator;
+
+
 		/******************************************************************************************************
 		* Func  : RandAccPriorityQueue
 		* Desc  : Constructor of the object. Initialize the 'compare' and 'equals' function pointers.
@@ -145,6 +148,24 @@ class RandAccPriorityQueue
 		* Ret   : a copy the last element.
 		******************************************************************************************************/
 		const T pop_back();
+
+
+		/******************************************************************************************************
+		* Func  : begin
+		* Desc  : Returns an iterator pointing to the beginning of the queue.
+		* Param : None
+		* Ret   : An iterator pointing to the beginning of the queue.
+		******************************************************************************************************/
+		iterator begin() const {return &vec[0];}
+
+
+		/******************************************************************************************************
+		* Func  : end
+		* Desc  : Returns an iterator pointing to the end of the queue.
+		* Param : None
+		* Ret   : An iterator pointing to the end of the queue.
+		******************************************************************************************************/
+		iterator end() const {return &vec[vec.size()];}
 
 
 	private:

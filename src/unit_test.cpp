@@ -153,3 +153,19 @@ TEST(Struct_test, CanInsertAndGet)
 	ASSERT_EQ("ad", queue.get(3).id);
 }
 
+TEST(GTest_Test, CanUseWithForEachLoop)
+{
+	RandAccPriorityQueue<int> queue(comp, eq);
+	for(int i = 0; i < 10; i++)
+	{
+		queue.insert(i);
+	}
+
+	int count = 0;
+	for(int i : queue)
+	{
+		ASSERT_EQ(count++, i);
+	}
+
+}
+
